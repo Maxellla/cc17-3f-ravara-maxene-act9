@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Flight Search</string>
+    <string name="enter_name">Enter departure airport</string>
+    <string name="flights_from">Flights from</string>
+    <string name="favorite_routes">Flights from</string>
+    <string name="depart">Depart</string>
+    <string name="arrive">Arrive</string>
 </resources>

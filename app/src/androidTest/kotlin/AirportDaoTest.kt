@@ -39,7 +39,7 @@ class AirportDaoTest {
     @Test
     @Throws(Exception::class)
     fun daoGetAll_getAllByPassengerCount() = runBlocking {
-        val allItems = airportDao.getAllByPassengers().first()
+        val allItems = airportDao.getAllByPassengers(0).first()
         allItems.forEach {
             if (it.id < allItems.count()) assertTrue(allItems[it.id - 1].passengers >= allItems[it.id].passengers)
         }

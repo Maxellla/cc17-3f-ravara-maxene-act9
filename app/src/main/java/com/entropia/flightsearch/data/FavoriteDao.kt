@@ -18,4 +18,7 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM favorite ORDER BY departure_code ASC")
     fun getAll(): Flow<List<Favorite>>
+
+    @Query("SELECT * FROM favorite WHERE id = :id")
+    fun getFavorite(id: Int)
 }

@@ -50,7 +50,7 @@ fun SearchBar(onValueChange: () -> Unit, modifier: Modifier = Modifier) {
 
     TextField(
         value = "",
-        onValueChange = { onValueChange },
+        onValueChange = { onValueChange() },
         singleLine = true,
         placeholder = {
             Text(

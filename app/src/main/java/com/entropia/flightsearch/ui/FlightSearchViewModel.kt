@@ -7,6 +7,7 @@ import com.entropia.flightsearch.data.Favorite
 class FlightSearchViewModel : ViewModel() {
 
 
+
 }
 
 data class FlightSearchUi(

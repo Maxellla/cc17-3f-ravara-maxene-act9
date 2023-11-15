@@ -20,5 +20,5 @@ interface FavoriteDao {
     fun getAll(): Flow<List<Favorite>>
 
     @Query("SELECT * FROM favorite WHERE id = :id")
-    fun getFavorite(id: Int)
+    fun getFavorite(id: Int): Favorite
 }

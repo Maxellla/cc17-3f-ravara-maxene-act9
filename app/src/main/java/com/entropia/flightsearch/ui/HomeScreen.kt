@@ -31,10 +31,6 @@ import com.entropia.flightsearch.R
 import com.entropia.flightsearch.data.Airport
 import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 
-
-
-
-
 @Composable
 fun SearchResultList(airports: List<Airport>) {
     LazyColumn() {

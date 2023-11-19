@@ -1,6 +1,5 @@
 package com.entropia.flightsearch.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +13,8 @@ import com.entropia.flightsearch.data.Airport
 import com.entropia.flightsearch.data.Favorite
 import com.entropia.flightsearch.data.FlightSearchRepository
 import com.entropia.flightsearch.data.OfflineRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FlightSearchViewModel(private val repository: FlightSearchRepository) : ViewModel() {
@@ -22,20 +22,22 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     var flightSearchUi by mutableStateOf(FlightSearchUi())
         private set
 
+
     fun updateCurrentAirport(airport: Airport) {
-        flightSearchUi.copy(
+        flightSearchUi = flightSearchUi.copy(
             currentAirport = airport
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+
     fun getSearchResultsList(input: String) {
         viewModelScope.launch {
-            flightSearchUi.copy(
-                //TODO
+            flightSearchUi = flightSearchUi.copy(
+                suggestedAirportList = repository.getAirportByInputStream(input).filterNotNull()
+                    .first()
             )
-            Log.d("airports", flightSearchUi.suggestedAirportList.toString())
         }
+
     }
 
     companion object {
@@ -56,7 +58,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
 data class FlightSearchUi(
     val currentAirport: Airport? = null,
-    val suggestedAirportList: List<Airport> = listOf()
+    val suggestedAirportList: List<Airport> = emptyList()
 )
 
 data class FavoriteUi(

@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.entropia.flightsearch.ui.FlightSearchUi
 import com.entropia.flightsearch.ui.FlightSearchViewModel
 import com.entropia.flightsearch.ui.TestScreen
 import com.entropia.flightsearch.ui.theme.FlightSearchTheme
@@ -25,7 +24,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     TestScreen(
                         viewModel = viewModel(factory = FlightSearchViewModel.factory),
-                        flightSearchUi = FlightSearchUi()
                     )
                 }
             }

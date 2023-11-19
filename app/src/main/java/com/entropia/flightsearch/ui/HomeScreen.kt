@@ -40,12 +40,12 @@ import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 @Composable
 fun TestScreen(
     viewModel: FlightSearchViewModel,
-    flightSearchUi: FlightSearchUi,
     modifier: Modifier = Modifier
 ) {
+
     Column(modifier.fillMaxSize()) {
         SearchBar(viewModel)
-        SearchResultList(airports = flightSearchUi.suggestedAirportList, viewModel = viewModel)
+        SearchResultList(airports = viewModel.flightSearchUi.suggestedAirportList, viewModel = viewModel)
     }
 }
 
@@ -74,7 +74,7 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
         value = value,
         onValueChange = { newValue ->
             value = newValue
-            viewModel.getSearchResultsList(newValue)
+            viewModel.getSearchResultsList("%$newValue%")
         },
         singleLine = true,
         placeholder = {

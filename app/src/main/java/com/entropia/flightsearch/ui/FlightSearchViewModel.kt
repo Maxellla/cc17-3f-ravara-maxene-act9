@@ -40,6 +40,17 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
     }
 
+    fun getAllDestinationAirports() {
+        viewModelScope.launch {
+            if (flightSearchUi.currentAirport != null) {
+                flightSearchUi= flightSearchUi.copy(
+                    destinationAirportList = repository.getAllDestinationAirportsStream(currentId = flightSearchUi.currentAirport!!.id).filterNotNull().first()
+                )
+            }
+        }
+
+    }
+
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -58,7 +69,8 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
 data class FlightSearchUi(
     val currentAirport: Airport? = null,
-    val suggestedAirportList: List<Airport> = emptyList()
+    val suggestedAirportList: List<Airport> = emptyList(),
+    val destinationAirportList: List<Airport> = emptyList()
 )
 
 data class FavoriteUi(

@@ -38,14 +38,24 @@ import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 
 
 @Composable
-fun TestScreen(
+fun HomeScreen(
     viewModel: FlightSearchViewModel,
     modifier: Modifier = Modifier
 ) {
 
     Column(modifier.fillMaxSize()) {
-        SearchBar(viewModel)
-        SearchResultList(airports = viewModel.flightSearchUi.suggestedAirportList, viewModel = viewModel)
+        SearchBar(
+            viewModel = viewModel,
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+        )
+        SearchResultList(
+            airports = viewModel.flightSearchUi.suggestedAirportList,
+            viewModel = viewModel,
+            modifier = Modifier.padding(
+                dimensionResource(id = R.dimen.padding_small)
+            )
+        )
+
     }
 }
 
@@ -63,6 +73,21 @@ fun SearchResultList(
     }
 }
 
+@Composable
+fun AirportList(
+    destinationList: List<Airport>,
+    departureAirport: Airport,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(destinationList) { destinationAirport ->
+            FlightCard(
+                departureAirport = departureAirport,
+                destinationAirport = destinationAirport,
+                onClick = { /*TODO*/ })
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -9,7 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.entropia.flightsearch.ui.FlightSearchViewModel
-import com.entropia.flightsearch.ui.TestScreen
+import com.entropia.flightsearch.ui.HomeScreen
 import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TestScreen(
+                    HomeScreen(
                         viewModel = viewModel(factory = FlightSearchViewModel.factory),
                     )
                 }

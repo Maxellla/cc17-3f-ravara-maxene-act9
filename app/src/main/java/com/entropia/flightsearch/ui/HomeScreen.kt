@@ -1,6 +1,7 @@
 package com.entropia.flightsearch.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,9 +56,17 @@ fun HomeScreen(
                 dimensionResource(id = R.dimen.padding_small)
             )
         )
-
+        if (viewModel.flightSearchUi.currentAirport != null) {
+            AirportList(
+                destinationList = viewModel.flightSearchUi.destinationAirportList,
+                departureAirport = viewModel.flightSearchUi.currentAirport!!
+            )
+        }
     }
+
+
 }
+
 
 @Composable
 fun SearchResultList(
@@ -68,7 +77,11 @@ fun SearchResultList(
             AirportData(airport = airport,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { viewModel.updateCurrentAirport(airport = airport) })
+                    .clickable {
+                        viewModel.updateCurrentAirport(airport = airport)
+                        viewModel.getAllDestinationAirports()
+
+                    })
         }
     }
 }
@@ -79,12 +92,21 @@ fun AirportList(
     departureAirport: Airport,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier.padding(
+            start = dimensionResource(id = R.dimen.padding_small),
+            end = dimensionResource(id = R.dimen.padding_small)
+        )
+    ) {
         items(destinationList) { destinationAirport ->
             FlightCard(
                 departureAirport = departureAirport,
                 destinationAirport = destinationAirport,
-                onClick = { /*TODO*/ })
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -114,7 +136,7 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
                 imageVector = Icons.Default.Search, contentDescription = "searchIcon"
             )
         },
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -133,9 +155,16 @@ fun FlightCard(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_small))
+                .fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
+            Column(
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .weight(2f)
+            ) {
                 Text(
                     text = stringResource(id = R.string.depart).uppercase(),
                     style = MaterialTheme.typography.titleSmall,
@@ -151,7 +180,7 @@ fun FlightCard(
                 )
                 AirportData(destinationAirport)
             }
-            IconButton(onClick = onClick) {
+            IconButton(onClick = onClick, modifier = Modifier.weight(0.3f)) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = "Add to Favorites",
@@ -165,7 +194,7 @@ fun FlightCard(
 @Composable
 private fun AirportData(airport: Airport, modifier: Modifier = Modifier) {
     Row(
-        verticalAlignment = Alignment.Bottom, modifier = modifier
+        verticalAlignment = Alignment.CenterVertically, modifier = modifier
     ) {
         Text(
             text = airport.iataCode, modifier = Modifier.padding(

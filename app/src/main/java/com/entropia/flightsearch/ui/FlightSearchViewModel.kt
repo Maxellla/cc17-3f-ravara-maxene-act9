@@ -22,6 +22,8 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     var flightSearchUi by mutableStateOf(FlightSearchUi())
         private set
 
+    var favoriteUi by mutableStateOf(FavoriteUi())
+        private set
 
     fun updateCurrentAirport(airport: Airport) {
         flightSearchUi = flightSearchUi.copy(
@@ -43,13 +45,25 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     fun getAllDestinationAirports() {
         viewModelScope.launch {
             if (flightSearchUi.currentAirport != null) {
-                flightSearchUi= flightSearchUi.copy(
-                    destinationAirportList = repository.getAllDestinationAirportsStream(currentId = flightSearchUi.currentAirport!!.id).filterNotNull().first()
+                flightSearchUi = flightSearchUi.copy(
+                    destinationAirportList = repository.getAllDestinationAirportsStream(currentId = flightSearchUi.currentAirport!!.id)
+                        .filterNotNull().first()
                 )
             }
         }
 
     }
+
+    fun addFavorite(favorite: Favorite) {
+        viewModelScope.launch {
+            repository.addFavorite(favorite)
+            favoriteUi = favoriteUi.copy(
+                favorites = repository.getAllFavorites().filterNotNull().first()
+            )
+        }
+    }
+
+
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {

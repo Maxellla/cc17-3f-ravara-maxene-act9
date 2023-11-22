@@ -42,6 +42,12 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
     }
 
+    fun clearSearchResultsList() {
+        flightSearchUi = flightSearchUi.copy(
+            suggestedAirportList = emptyList()
+        )
+    }
+
     fun getAllDestinationAirports() {
         viewModelScope.launch {
             if (flightSearchUi.currentAirport != null) {
@@ -62,7 +68,6 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
             )
         }
     }
-
 
 
     companion object {

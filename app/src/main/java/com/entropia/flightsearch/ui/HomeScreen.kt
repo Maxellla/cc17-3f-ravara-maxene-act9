@@ -27,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +45,6 @@ fun HomeScreen(
     viewModel: FlightSearchViewModel,
     modifier: Modifier = Modifier
 ) {
-
     Column(modifier.fillMaxSize()) {
         SearchBar(
             viewModel = viewModel,
@@ -63,8 +64,6 @@ fun HomeScreen(
             )
         }
     }
-
-
 }
 
 
@@ -72,6 +71,7 @@ fun HomeScreen(
 fun SearchResultList(
     airports: List<Airport>, viewModel: FlightSearchViewModel, modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     LazyColumn(modifier) {
         items(airports) { airport ->
             AirportData(airport = airport,
@@ -80,7 +80,7 @@ fun SearchResultList(
                     .clickable {
                         viewModel.updateCurrentAirport(airport = airport)
                         viewModel.getAllDestinationAirports()
-
+                        focusManager.clearFocus()
                     })
         }
     }
@@ -111,6 +111,7 @@ fun AirportList(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
@@ -136,7 +137,14 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
                 imageVector = Icons.Default.Search, contentDescription = "searchIcon"
             )
         },
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .onFocusEvent {
+                if (!it.isFocused) {
+                    value = ""
+                    viewModel.clearSearchResultsList()
+                }
+            }
     )
 }
 

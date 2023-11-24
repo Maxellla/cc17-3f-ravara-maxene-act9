@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.entropia.flightsearch.R
 import com.entropia.flightsearch.data.Airport
+import com.entropia.flightsearch.data.Favorite
 import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 
 
@@ -60,7 +61,8 @@ fun HomeScreen(
         if (viewModel.flightSearchUi.currentAirport != null) {
             AirportList(
                 destinationList = viewModel.flightSearchUi.destinationAirportList,
-                departureAirport = viewModel.flightSearchUi.currentAirport!!
+                departureAirport = viewModel.flightSearchUi.currentAirport!!,
+                viewModel = viewModel
             )
         }
     }
@@ -90,6 +92,7 @@ fun SearchResultList(
 fun AirportList(
     destinationList: List<Airport>,
     departureAirport: Airport,
+    viewModel: FlightSearchViewModel,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -102,7 +105,17 @@ fun AirportList(
             FlightCard(
                 departureAirport = departureAirport,
                 destinationAirport = destinationAirport,
-                onClick = { /*TODO*/ },
+                onClick = {
+
+                        viewModel.addOrRemoveFavorite(
+                            Favorite(
+                                departureCode = departureAirport.iataCode,
+                                destinationCode = destinationAirport.iataCode
+                            )
+                        )
+
+
+                },
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .fillMaxWidth()

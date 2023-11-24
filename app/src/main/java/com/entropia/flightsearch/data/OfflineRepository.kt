@@ -18,5 +18,7 @@ class OfflineRepository(
     override fun getAllFavorites(): Flow<List<Favorite>> = favoriteDao.getAll()
 
     override fun getFavorite(id: Int): Favorite = favoriteDao.getFavorite(id)
+    override suspend fun getFavorite(departureAirport: String, destinationAirport: String): Favorite? =
+        favoriteDao.getFavorite(departureAirport, destinationAirport)
 
 }

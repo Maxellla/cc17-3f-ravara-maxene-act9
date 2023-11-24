@@ -1,5 +1,6 @@
 package com.entropia.flightsearch.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -60,15 +61,35 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
     }
 
+    fun addOrRemoveFavorite(favorite: Favorite) {
+        viewModelScope.launch {
+            if (repository.getFavorite(favorite.departureCode, favorite.destinationCode) == null) {
+                addFavorite(favorite)
+            } else {
+                removeFavorite(repository.getFavorite(favorite.departureCode, favorite.destinationCode)!!)
+            }
+        }
+    }
+
     fun addFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.addFavorite(favorite)
             favoriteUi = favoriteUi.copy(
                 favorites = repository.getAllFavorites().filterNotNull().first()
             )
+            Log.d("favorite", favoriteUi.favorites.toString())
         }
     }
 
+    fun removeFavorite(favorite: Favorite) {
+        viewModelScope.launch {
+            repository.removeFavorite(favorite)
+            favoriteUi = favoriteUi.copy(
+                favorites = repository.getAllFavorites().filterNotNull().first()
+            )
+        }
+        Log.d("favorite", favoriteUi.favorites.toString())
+    }
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
@@ -77,8 +98,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as FlightSearchApplication)
                 val repository = OfflineRepository(
-                    application.database.airportDao(),
-                    application.database.favoriteDao()
+                    application.database.airportDao(), application.database.favoriteDao()
                 )
                 FlightSearchViewModel(repository)
             }

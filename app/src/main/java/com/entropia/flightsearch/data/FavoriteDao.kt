@@ -21,4 +21,7 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM favorite WHERE id = :id")
     fun getFavorite(id: Int): Favorite
+
+    @Query("SELECT * FROM favorite WHERE departure_code = :departureAirport AND destination_code = :destinationAirport")
+    suspend fun getFavorite(departureAirport: String, destinationAirport:String): Favorite?
 }

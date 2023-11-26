@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -64,6 +65,8 @@ fun HomeScreen(
                 departureAirport = viewModel.flightSearchUi.currentAirport!!,
                 viewModel = viewModel
             )
+        } else {
+            FavoriteList(favorites = viewModel.favoriteUi.favorites, viewModel = viewModel)
         }
     }
 }
@@ -89,6 +92,41 @@ fun SearchResultList(
 }
 
 @Composable
+fun FavoriteList(
+    favorites: List<Favorite>,
+    viewModel: FlightSearchViewModel,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.padding(
+            start = dimensionResource(id = R.dimen.padding_small),
+            end = dimensionResource(id = R.dimen.padding_small)
+        )
+    ) {
+        items(favorites) { favorite ->
+            /* TODO convert favorite into Airports
+            FlightCard(
+                departureAirport = departureAirport,
+                destinationAirport = destinationAirport,
+                onClick = {
+
+                    viewModel.addOrRemoveFavorite(
+                        favorite = favorite
+                    )
+                },
+                isPressed = viewModel.isFavorite(
+                    departureCode = departureAirport.iataCode,
+                    destinationCode = destinationAirport.iataCode
+                ),
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .fillMaxWidth()
+            ) */
+        }
+    }
+}
+
+@Composable
 fun AirportList(
     destinationList: List<Airport>,
     departureAirport: Airport,
@@ -107,15 +145,19 @@ fun AirportList(
                 destinationAirport = destinationAirport,
                 onClick = {
 
-                        viewModel.addOrRemoveFavorite(
-                            Favorite(
-                                departureCode = departureAirport.iataCode,
-                                destinationCode = destinationAirport.iataCode
-                            )
+                    viewModel.addOrRemoveFavorite(
+                        Favorite(
+                            departureCode = departureAirport.iataCode,
+                            destinationCode = destinationAirport.iataCode
                         )
+                    )
 
 
                 },
+                isPressed = viewModel.isFavorite(
+                    departureCode = departureAirport.iataCode,
+                    destinationCode = destinationAirport.iataCode
+                ),
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .fillMaxWidth()
@@ -167,6 +209,7 @@ fun FlightCard(
     departureAirport: Airport,
     destinationAirport: Airport,
     onClick: () -> Unit,
+    isPressed: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -205,6 +248,8 @@ fun FlightCard(
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = "Add to Favorites",
+                    tint = if (isPressed) Color.Blue else
+                        Color.Unspecified,
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
                 )
             }
@@ -236,7 +281,12 @@ fun FlightCardPreview() {
     val departure = Airport(0, "Warsaw Chopin Airport", "WAW", 1)
     val destination = Airport(1, "Stockholm Arlanda Airport", "ARN", 2)
     FlightSearchTheme {
-        FlightCard(departureAirport = departure, destinationAirport = destination, onClick = {})
+        FlightCard(
+            departureAirport = departure,
+            destinationAirport = destination,
+            onClick = {},
+            isPressed = true
+        )
     }
 
 }

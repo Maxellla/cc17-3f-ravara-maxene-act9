@@ -9,6 +9,8 @@ class OfflineRepository(
     override fun getAirportByInputStream(input: String): Flow<List<Airport>> =
         airportDao.getAirportByName(input)
 
+    override fun getAirportByCode(input: String): Airport? = airportDao.getAirportByCode(input)
+
     override fun getAllDestinationAirportsStream(currentId: Int): Flow<List<Airport>> =
         airportDao.getAllByPassengers(currentId)
 
@@ -16,9 +18,10 @@ class OfflineRepository(
 
     override suspend fun removeFavorite(favorite: Favorite) = favoriteDao.removeFavorite(favorite)
     override fun getAllFavorites(): Flow<List<Favorite>> = favoriteDao.getAll()
-
-    override fun getFavorite(id: Int): Favorite = favoriteDao.getFavorite(id)
-    override suspend fun getFavorite(departureAirport: String, destinationAirport: String): Favorite? =
+    override suspend fun getFavorite(
+        departureAirport: String,
+        destinationAirport: String
+    ): Favorite? =
         favoriteDao.getFavorite(departureAirport, destinationAirport)
 
 }

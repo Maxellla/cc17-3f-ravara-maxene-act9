@@ -1,6 +1,5 @@
 package com.entropia.flightsearch.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -66,30 +65,45 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
             if (repository.getFavorite(favorite.departureCode, favorite.destinationCode) == null) {
                 addFavorite(favorite)
             } else {
-                removeFavorite(repository.getFavorite(favorite.departureCode, favorite.destinationCode)!!)
+                removeFavorite(
+                    repository.getFavorite(
+                        favorite.departureCode,
+                        favorite.destinationCode
+                    )!!
+                )
             }
         }
     }
 
-    fun addFavorite(favorite: Favorite) {
+    private fun addFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.addFavorite(favorite)
             favoriteUi = favoriteUi.copy(
                 favorites = repository.getAllFavorites().filterNotNull().first()
             )
-            Log.d("favorite", favoriteUi.favorites.toString())
         }
     }
 
-    fun removeFavorite(favorite: Favorite) {
+
+    private fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.removeFavorite(favorite)
             favoriteUi = favoriteUi.copy(
                 favorites = repository.getAllFavorites().filterNotNull().first()
             )
         }
-        Log.d("favorite", favoriteUi.favorites.toString())
     }
+
+    fun isFavorite(departureCode: String, destinationCode: String): Boolean {
+        if (favoriteUi.favorites.isNotEmpty()) {
+            favoriteUi.favorites.forEach { favorite ->
+                if (favorite.departureCode == departureCode && favorite.destinationCode == destinationCode)
+                    return true
+            }
+        }
+        return false
+    }
+
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {

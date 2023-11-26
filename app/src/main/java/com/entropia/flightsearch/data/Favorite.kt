@@ -11,5 +11,5 @@ data class Favorite(
     @ColumnInfo(name = "departure_code")
     val departureCode: String,
     @ColumnInfo(name = "destination_code")
-    val destinationCode: String,
+    val destinationCode: String
 )

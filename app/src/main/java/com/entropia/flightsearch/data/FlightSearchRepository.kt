@@ -10,5 +10,5 @@ interface FlightSearchRepository {
     suspend fun removeFavorite(favorite: Favorite)
     fun getAllFavorites(): Flow<List<Favorite>>
 
-    suspend fun getFavorite(departureAirport: String, destinationAirport:String): Favorite?
+    suspend fun getFavorite(departureAirport: Airport, destinationAirport:Airport): Favorite?
 }

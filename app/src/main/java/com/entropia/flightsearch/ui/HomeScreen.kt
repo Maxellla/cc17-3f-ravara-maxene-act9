@@ -27,9 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +58,7 @@ fun HomeScreen(
             )
         )
         if (viewModel.flightSearchUi.currentAirport != null) {
-            AirportList(
+            RouteList(
                 destinationList = viewModel.flightSearchUi.destinationAirportList,
                 departureAirport = viewModel.flightSearchUi.currentAirport!!,
                 viewModel = viewModel
@@ -76,7 +74,6 @@ fun HomeScreen(
 fun SearchResultList(
     airports: List<Airport>, viewModel: FlightSearchViewModel, modifier: Modifier = Modifier
 ) {
-    val focusManager = LocalFocusManager.current
     LazyColumn(modifier) {
         items(airports) { airport ->
             AirportData(airport = airport,
@@ -85,7 +82,7 @@ fun SearchResultList(
                     .clickable {
                         viewModel.updateCurrentAirport(airport = airport)
                         viewModel.getAllDestinationAirports()
-                        focusManager.clearFocus()
+                        viewModel.clearSearchResultsList()
                     })
         }
     }
@@ -104,10 +101,10 @@ fun FavoriteList(
         )
     ) {
         items(favorites) { favorite ->
-            /* TODO convert favorite into Airports
+
             FlightCard(
-                departureAirport = departureAirport,
-                destinationAirport = destinationAirport,
+                departureAirport = favorite.departureAirport,
+                destinationAirport = favorite.destinationAirport,
                 onClick = {
 
                     viewModel.addOrRemoveFavorite(
@@ -115,19 +112,19 @@ fun FavoriteList(
                     )
                 },
                 isPressed = viewModel.isFavorite(
-                    departureCode = departureAirport.iataCode,
-                    destinationCode = destinationAirport.iataCode
+                    departureCode = favorite.departureAirport.iataCode,
+                    destinationCode = favorite.destinationAirport.iataCode
                 ),
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .fillMaxWidth()
-            ) */
+            )
         }
     }
 }
 
 @Composable
-fun AirportList(
+fun RouteList(
     destinationList: List<Airport>,
     departureAirport: Airport,
     viewModel: FlightSearchViewModel,
@@ -147,12 +144,10 @@ fun AirportList(
 
                     viewModel.addOrRemoveFavorite(
                         Favorite(
-                            departureCode = departureAirport.iataCode,
-                            destinationCode = destinationAirport.iataCode
+                            departureAirport = departureAirport,
+                            destinationAirport = destinationAirport
                         )
                     )
-
-
                 },
                 isPressed = viewModel.isFavorite(
                     departureCode = departureAirport.iataCode,
@@ -177,7 +172,12 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
         value = value,
         onValueChange = { newValue ->
             value = newValue
-            viewModel.getSearchResultsList("%$newValue%")
+            if (value == "") {
+                viewModel.updateCurrentAirport(null)
+                viewModel.clearSearchResultsList()
+            } else {
+                viewModel.getSearchResultsList("%$newValue%")
+            }
         },
         singleLine = true,
         placeholder = {
@@ -194,12 +194,6 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
         },
         modifier = modifier
             .fillMaxWidth()
-            .onFocusEvent {
-                if (!it.isFocused) {
-                    value = ""
-                    viewModel.clearSearchResultsList()
-                }
-            }
     )
 }
 

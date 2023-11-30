@@ -5,9 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.TypeConverters
 import kotlinx.coroutines.flow.Flow
 
 @Dao
+@TypeConverters(AirportConverter::class)
 interface FavoriteDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -20,5 +22,5 @@ interface FavoriteDao {
     fun getAll(): Flow<List<Favorite>>
 
     @Query("SELECT * FROM favorite WHERE departure_code = :departureAirport AND destination_code = :destinationAirport")
-    suspend fun getFavorite(departureAirport: String, destinationAirport:String): Favorite?
+    suspend fun getFavorite(departureAirport: Airport, destinationAirport:Airport): Favorite?
 }

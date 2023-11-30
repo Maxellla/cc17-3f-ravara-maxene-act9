@@ -25,7 +25,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     var favoriteUi by mutableStateOf(FavoriteUi())
         private set
 
-    fun updateCurrentAirport(airport: Airport) {
+    fun updateCurrentAirport(airport: Airport?) {
         flightSearchUi = flightSearchUi.copy(
             currentAirport = airport
         )
@@ -62,13 +62,17 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
     fun addOrRemoveFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            if (repository.getFavorite(favorite.departureCode, favorite.destinationCode) == null) {
+            if (repository.getFavorite(
+                    favorite.departureAirport,
+                    favorite.destinationAirport
+                ) == null
+            ) {
                 addFavorite(favorite)
             } else {
                 removeFavorite(
                     repository.getFavorite(
-                        favorite.departureCode,
-                        favorite.destinationCode
+                        favorite.departureAirport,
+                        favorite.destinationAirport
                     )!!
                 )
             }
@@ -97,13 +101,12 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     fun isFavorite(departureCode: String, destinationCode: String): Boolean {
         if (favoriteUi.favorites.isNotEmpty()) {
             favoriteUi.favorites.forEach { favorite ->
-                if (favorite.departureCode == departureCode && favorite.destinationCode == destinationCode)
+                if (favorite.departureAirport.iataCode == departureCode && favorite.destinationAirport.iataCode == destinationCode)
                     return true
             }
         }
         return false
     }
-
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
@@ -127,5 +130,5 @@ data class FlightSearchUi(
 )
 
 data class FavoriteUi(
-    val favorites: List<Favorite> = listOf()
+    val favorites: List<Favorite> = listOf(),
 )

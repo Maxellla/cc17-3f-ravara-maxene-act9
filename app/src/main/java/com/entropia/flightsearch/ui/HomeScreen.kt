@@ -50,13 +50,16 @@ fun HomeScreen(
             viewModel = viewModel,
             modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
         )
-        SearchResultList(
-            airports = viewModel.flightSearchUi.suggestedAirportList,
-            viewModel = viewModel,
-            modifier = Modifier.padding(
-                dimensionResource(id = R.dimen.padding_small)
+        if (viewModel.flightSearchUi.currentAirport == null) {
+            SearchResultList(
+                airports = viewModel.flightSearchUi.suggestedAirportList,
+                viewModel = viewModel,
+                modifier = Modifier.padding(
+                    dimensionResource(id = R.dimen.padding_small)
+                )
             )
-        )
+        }
+        viewModel.updateFavorites()
         if (viewModel.flightSearchUi.currentAirport != null) {
             RouteList(
                 destinationList = viewModel.flightSearchUi.destinationAirportList,
@@ -69,6 +72,41 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
+    var value by remember {
+        mutableStateOf("")
+    }
+    TextField(
+        value = value,
+        onValueChange = { newValue ->
+            value = newValue
+            viewModel.updateCurrentAirport(null)
+            if (value == "") {
+                viewModel.clearSearchResultsList()
+            } else {
+                viewModel.getSearchResultsList("%$newValue%")
+
+            }
+        },
+        singleLine = true,
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.enter_name),
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 16.sp
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search, contentDescription = "searchIcon"
+            )
+        },
+        modifier = modifier
+            .fillMaxWidth()
+    )
+}
 
 @Composable
 fun SearchResultList(
@@ -159,42 +197,6 @@ fun RouteList(
             )
         }
     }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
-    var value by remember {
-        mutableStateOf("")
-    }
-    TextField(
-        value = value,
-        onValueChange = { newValue ->
-            value = newValue
-            if (value == "") {
-                viewModel.updateCurrentAirport(null)
-                viewModel.clearSearchResultsList()
-            } else {
-                viewModel.getSearchResultsList("%$newValue%")
-            }
-        },
-        singleLine = true,
-        placeholder = {
-            Text(
-                text = stringResource(id = R.string.enter_name),
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = 16.sp
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search, contentDescription = "searchIcon"
-            )
-        },
-        modifier = modifier
-            .fillMaxWidth()
-    )
 }
 
 

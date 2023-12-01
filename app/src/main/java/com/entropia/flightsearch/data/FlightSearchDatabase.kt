@@ -18,14 +18,15 @@ abstract class FlightSearchDatabase : RoomDatabase() {
         fun getDatabase(context: Context): FlightSearchDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
-                    context = context, FlightSearchDatabase::class.java, "flight_search_database"
-                ).createFromAsset("database/flight_search.db")
+                    context = context, FlightSearchDatabase::class.java, "flight_search.db"
+                )
+                    .createFromAsset("database/flight_search.db")
                     .addTypeConverter(AirportConverter())
-                    .fallbackToDestructiveMigration()
                     .build().also {
                         Instance = it
                     }
             }
         }
+
     }
 }

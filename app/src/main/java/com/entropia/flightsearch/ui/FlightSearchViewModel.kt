@@ -25,6 +25,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     var favoriteUi by mutableStateOf(FavoriteUi())
         private set
 
+
     fun updateCurrentAirport(airport: Airport?) {
         flightSearchUi = flightSearchUi.copy(
             currentAirport = airport
@@ -44,7 +45,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 
     fun clearSearchResultsList() {
         flightSearchUi = flightSearchUi.copy(
-            suggestedAirportList = emptyList()
+            suggestedAirportList = emptyList(),
         )
     }
 
@@ -76,15 +77,13 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
                     )!!
                 )
             }
+            updateFavorites()
         }
     }
 
     private fun addFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.addFavorite(favorite)
-            favoriteUi = favoriteUi.copy(
-                favorites = repository.getAllFavorites().filterNotNull().first()
-            )
         }
     }
 
@@ -92,12 +91,17 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
     private fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.removeFavorite(favorite)
+        }
+    }
+
+    fun updateFavorites(){
+        viewModelScope.launch {
             favoriteUi = favoriteUi.copy(
                 favorites = repository.getAllFavorites().filterNotNull().first()
             )
         }
-    }
 
+    }
     fun isFavorite(departureCode: String, destinationCode: String): Boolean {
         if (favoriteUi.favorites.isNotEmpty()) {
             favoriteUi.favorites.forEach { favorite ->
@@ -126,7 +130,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
 data class FlightSearchUi(
     val currentAirport: Airport? = null,
     val suggestedAirportList: List<Airport> = emptyList(),
-    val destinationAirportList: List<Airport> = emptyList()
+    val destinationAirportList: List<Airport> = emptyList(),
 )
 
 data class FavoriteUi(

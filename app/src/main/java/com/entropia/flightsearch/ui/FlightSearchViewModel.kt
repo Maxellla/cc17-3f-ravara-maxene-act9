@@ -13,17 +13,22 @@ import com.entropia.flightsearch.data.Airport
 import com.entropia.flightsearch.data.Favorite
 import com.entropia.flightsearch.data.FlightSearchRepository
 import com.entropia.flightsearch.data.OfflineRepository
+import com.entropia.flightsearch.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class FlightSearchViewModel(private val repository: FlightSearchRepository) : ViewModel() {
+class FlightSearchViewModel(
+    private val repository: FlightSearchRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     var flightSearchUi by mutableStateOf(FlightSearchUi())
         private set
 
     var favoriteUi by mutableStateOf(FavoriteUi())
         private set
+
 
 
     fun updateCurrentAirport(airport: Airport?) {
@@ -94,7 +99,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
         }
     }
 
-    fun updateFavorites(){
+    fun updateFavorites() {
         viewModelScope.launch {
             favoriteUi = favoriteUi.copy(
                 favorites = repository.getAllFavorites().filterNotNull().first()
@@ -102,6 +107,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
         }
 
     }
+
     fun isFavorite(departureCode: String, destinationCode: String): Boolean {
         if (favoriteUi.favorites.isNotEmpty()) {
             favoriteUi.favorites.forEach { favorite ->
@@ -110,6 +116,12 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
             }
         }
         return false
+    }
+
+    fun updateInputPreferences(input: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveInputString(inputString = input)
+        }
     }
 
     companion object {
@@ -121,7 +133,7 @@ class FlightSearchViewModel(private val repository: FlightSearchRepository) : Vi
                 val repository = OfflineRepository(
                     application.database.airportDao(), application.database.favoriteDao()
                 )
-                FlightSearchViewModel(repository)
+                FlightSearchViewModel(repository, application.userPreferencesRepository)
             }
         }
     }

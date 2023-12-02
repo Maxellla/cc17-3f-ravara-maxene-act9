@@ -74,9 +74,9 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
+fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier, input: String = "") {
     var value by remember {
-        mutableStateOf("")
+        mutableStateOf(input)
     }
     TextField(
         value = value,
@@ -89,6 +89,7 @@ fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
                 viewModel.getSearchResultsList("%$newValue%")
 
             }
+            viewModel.updateInputPreferences(value)
         },
         singleLine = true,
         placeholder = {

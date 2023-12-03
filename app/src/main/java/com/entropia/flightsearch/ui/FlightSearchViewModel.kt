@@ -30,7 +30,6 @@ class FlightSearchViewModel(
         private set
 
 
-
     fun updateCurrentAirport(airport: Airport?) {
         flightSearchUi = flightSearchUi.copy(
             currentAirport = airport
@@ -121,6 +120,17 @@ class FlightSearchViewModel(
     fun updateInputPreferences(input: String) {
         viewModelScope.launch {
             userPreferencesRepository.saveInputString(inputString = input)
+            flightSearchUi = flightSearchUi.copy(
+                input = input
+            )
+        }
+    }
+
+    fun loadInputPreferences() {
+        viewModelScope.launch {
+            flightSearchUi = flightSearchUi.copy(
+                input = userPreferencesRepository.inputString.first()
+            )
         }
     }
 
@@ -141,6 +151,7 @@ class FlightSearchViewModel(
 
 data class FlightSearchUi(
     val currentAirport: Airport? = null,
+    val input: String = "",
     val suggestedAirportList: List<Airport> = emptyList(),
     val destinationAirportList: List<Airport> = emptyList(),
 )

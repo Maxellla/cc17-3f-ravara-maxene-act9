@@ -21,10 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +41,7 @@ fun HomeScreen(
     viewModel: FlightSearchViewModel,
     modifier: Modifier = Modifier
 ) {
+    viewModel.loadInputPreferences()
     Column(modifier.fillMaxSize()) {
         SearchBar(
             viewModel = viewModel,
@@ -74,22 +71,18 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier, input: String = "") {
-    var value by remember {
-        mutableStateOf(input)
-    }
+fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
     TextField(
-        value = value,
+        value = viewModel.flightSearchUi.input,
         onValueChange = { newValue ->
-            value = newValue
             viewModel.updateCurrentAirport(null)
-            if (value == "") {
+            if (newValue == "") {
                 viewModel.clearSearchResultsList()
             } else {
                 viewModel.getSearchResultsList("%$newValue%")
 
             }
-            viewModel.updateInputPreferences(value)
+            viewModel.updateInputPreferences(newValue)
         },
         singleLine = true,
         placeholder = {

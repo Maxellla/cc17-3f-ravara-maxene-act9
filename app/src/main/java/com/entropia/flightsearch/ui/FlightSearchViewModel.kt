@@ -40,7 +40,7 @@ class FlightSearchViewModel(
     fun getSearchResultsList(input: String) {
         viewModelScope.launch {
             flightSearchUi = flightSearchUi.copy(
-                suggestedAirportList = repository.getAirportByInputStream(input).filterNotNull()
+                suggestedAirportList = repository.getAirportByInputStream("%$input%").filterNotNull()
                     .first()
             )
         }
@@ -48,6 +48,7 @@ class FlightSearchViewModel(
     }
 
     fun clearSearchResultsList() {
+        updateInputPreferences("")
         flightSearchUi = flightSearchUi.copy(
             suggestedAirportList = emptyList(),
         )
@@ -68,16 +69,14 @@ class FlightSearchViewModel(
     fun addOrRemoveFavorite(favorite: Favorite) {
         viewModelScope.launch {
             if (repository.getFavorite(
-                    favorite.departureAirport,
-                    favorite.destinationAirport
+                    favorite.departureAirport, favorite.destinationAirport
                 ) == null
             ) {
                 addFavorite(favorite)
             } else {
                 removeFavorite(
                     repository.getFavorite(
-                        favorite.departureAirport,
-                        favorite.destinationAirport
+                        favorite.departureAirport, favorite.destinationAirport
                     )!!
                 )
             }
@@ -110,8 +109,7 @@ class FlightSearchViewModel(
     fun isFavorite(departureCode: String, destinationCode: String): Boolean {
         if (favoriteUi.favorites.isNotEmpty()) {
             favoriteUi.favorites.forEach { favorite ->
-                if (favorite.departureAirport.iataCode == departureCode && favorite.destinationAirport.iataCode == destinationCode)
-                    return true
+                if (favorite.departureAirport.iataCode == departureCode && favorite.destinationAirport.iataCode == destinationCode) return true
             }
         }
         return false
@@ -126,7 +124,12 @@ class FlightSearchViewModel(
         }
     }
 
-    fun loadInputPreferences() {
+    fun loadInputPreferencesAndSuggestedList() {
+        loadInputPreferences()
+        getSearchResultsList(flightSearchUi.input)
+    }
+
+    private fun loadInputPreferences() {
         viewModelScope.launch {
             flightSearchUi = flightSearchUi.copy(
                 input = userPreferencesRepository.inputString.first()

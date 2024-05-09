@@ -29,6 +29,12 @@ class FlightSearchViewModel(
     var favoriteUi by mutableStateOf(FavoriteUi())
         private set
 
+    var userInput by mutableStateOf("")
+        private set
+
+    fun updateUserInput(input: String) {
+        userInput = input
+    }
 
     fun updateCurrentAirport(airport: Airport?) {
         flightSearchUi = flightSearchUi.copy(
@@ -40,7 +46,8 @@ class FlightSearchViewModel(
     fun getSearchResultsList(input: String) {
         viewModelScope.launch {
             flightSearchUi = flightSearchUi.copy(
-                suggestedAirportList = repository.getAirportByInputStream("%$input%").filterNotNull()
+                suggestedAirportList = repository.getAirportByInputStream("%$input%")
+                    .filterNotNull()
                     .first()
             )
         }
@@ -118,22 +125,17 @@ class FlightSearchViewModel(
     fun updateInputPreferences(input: String) {
         viewModelScope.launch {
             userPreferencesRepository.saveInputString(inputString = input)
-            flightSearchUi = flightSearchUi.copy(
-                input = input
-            )
         }
     }
 
     fun loadInputPreferencesAndSuggestedList() {
         loadInputPreferences()
-        getSearchResultsList(flightSearchUi.input)
+        getSearchResultsList(userInput)
     }
 
     private fun loadInputPreferences() {
         viewModelScope.launch {
-            flightSearchUi = flightSearchUi.copy(
-                input = userPreferencesRepository.inputString.first()
-            )
+            userInput = userPreferencesRepository.inputString.first()
         }
     }
 
@@ -154,7 +156,6 @@ class FlightSearchViewModel(
 
 data class FlightSearchUi(
     val currentAirport: Airport? = null,
-    val input: String = "",
     val suggestedAirportList: List<Airport> = emptyList(),
     val destinationAirportList: List<Airport> = emptyList(),
 )

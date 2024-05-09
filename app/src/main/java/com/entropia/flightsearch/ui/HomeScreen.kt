@@ -34,7 +34,7 @@ fun HomeScreen(
                 viewModel = viewModel,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
             )
-            if (viewModel.flightSearchUi.currentAirport == null && viewModel.flightSearchUi.input != "") {
+            if (viewModel.flightSearchUi.currentAirport == null && viewModel.userInput != "") {
                 SearchResultList(
                     viewModel = viewModel,
                     modifier = Modifier.padding(
@@ -54,7 +54,7 @@ fun HomeScreen(
                     departureAirport = viewModel.flightSearchUi.currentAirport!!,
                     viewModel = viewModel
                 )
-            } else if (viewModel.flightSearchUi.input == "") {
+            } else if (viewModel.userInput == "") {
                 viewModel.updateFavorites()
                 Text(
                     text = stringResource(id = R.string.favorite_routes),

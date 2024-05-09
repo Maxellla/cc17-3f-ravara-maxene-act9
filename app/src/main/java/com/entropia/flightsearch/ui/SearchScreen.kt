@@ -26,7 +26,8 @@ import com.entropia.flightsearch.data.Airport
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(viewModel: FlightSearchViewModel, modifier: Modifier = Modifier) {
-    TextField(value = viewModel.flightSearchUi.input, onValueChange = { newValue ->
+    TextField(value = viewModel.userInput, onValueChange = { newValue ->
+        viewModel.updateUserInput(newValue)
         viewModel.updateCurrentAirport(null)
         if (newValue == "") {
             viewModel.clearSearchResultsList()

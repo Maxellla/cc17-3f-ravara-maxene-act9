@@ -17,6 +17,7 @@ import com.entropia.flightsearch.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class FlightSearchViewModel(
     private val repository: FlightSearchRepository,
@@ -42,7 +43,10 @@ class FlightSearchViewModel(
         )
     }
 
-
+    init {
+        runBlocking { userInput=userPreferencesRepository.inputString.first() }
+        getSearchResultsList(userInput)
+    }
     fun getSearchResultsList(input: String) {
         viewModelScope.launch {
             flightSearchUi = flightSearchUi.copy(
@@ -128,16 +132,6 @@ class FlightSearchViewModel(
         }
     }
 
-    fun loadInputPreferencesAndSuggestedList() {
-        loadInputPreferences()
-        getSearchResultsList(userInput)
-    }
-
-    private fun loadInputPreferences() {
-        viewModelScope.launch {
-            userInput = userPreferencesRepository.inputString.first()
-        }
-    }
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {

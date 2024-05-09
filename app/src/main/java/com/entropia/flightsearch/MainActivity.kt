@@ -15,6 +15,8 @@ import com.entropia.flightsearch.ui.HomeScreen
 import com.entropia.flightsearch.ui.theme.FlightSearchTheme
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -26,7 +28,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val viewModel: FlightSearchViewModel =
                         viewModel(factory = FlightSearchViewModel.factory)
-                    viewModel.loadInputPreferencesAndSuggestedList()
                     HomeScreen(
                         viewModel = viewModel,
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))

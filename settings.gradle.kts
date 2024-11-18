@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Flight Search"
+rootProject.name = "cc17-3f-bravojrs-act9"
 include(":app")
  
